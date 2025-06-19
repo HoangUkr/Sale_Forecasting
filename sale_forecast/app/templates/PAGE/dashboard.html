@@ -6,10 +6,10 @@
     <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
         <div class="container-fluid">
             <div class="collapse navbar-collapse justify-content-center d-flex" id="navigation">
-                <form method="post" enctype="multipart/form-data" class="p-1 border rounded">
+                <form method="post" enctype="multipart/form-data" id="upload-form" class="p-1 border rounded">
                     <div class="input-group no-border">
                         {% csrf_token %}
-                        <input type="file" id="uploadFile" accept=".csv" class="form-control" placeholder="Upload CSV file here..." >                        
+                        <input type="file" name="file" id="uploadFile" accept=".csv" class="form-control" placeholder="Upload CSV file here..." >                        
                         <div class="update ml-auto mr-auto">
                             <button type="submit" class="btn btn-primary btn-round">
                                 Submit
@@ -34,7 +34,7 @@
                             <div class="col-7 col-md-8">
                                 <div class="numbers">
                                     <p class="card-category">Total Orders</p>
-                                    <p class="card-title">1181
+                                    <p class="card-title" id="total_order">0
                                     <p>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                             <div class="col-7 col-md-8">
                                 <div class="numbers">
                                     <p class="card-category">Revenue</p>
-                                    <p class="card-title">$ 1,345
+                                    <p class="card-title" id="total_revenue">$ 1,345
                                     <p>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                             <div class="col-7 col-md-8">
                                 <div class="numbers">
                                     <p class="card-category">Most Sold Dish</p>
-                                    <p class="card-title">23
+                                    <p class="card-title" id="most_sold">23
                                     <p>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                             <div class="col-7 col-md-8">
                                 <div class="numbers">
                                     <p class="card-category">Least Sold Dish</p>
-                                    <p class="card-title">+45K
+                                    <p class="card-title" id="least_sold">+45K
                                     <p>
                                 </div>
                             </div>
@@ -198,4 +198,27 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('upload-form').addEventListener('submit', function(e){
+        debugger;
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{% url 'upload_csv' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            debugger;
+            document.getElementById('total_order').innerText = data.total_order;
+            document.getElementById('total_revenue').innerText = data.total_revenue;
+            document.getElementById('most_sold').innerText = data.most_sold;
+            document.getElementById('least_sold').innerText = data.least_sold;
+        })
+        .catch(error => console.log("Error: ", error));
+    });
+</script>
 {% endblock %}
