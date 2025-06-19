@@ -18,4 +18,4 @@ def show_history(request):
     return render(request, 'history.html', {'files': files})
 
 def index(request):
-    return render(request, 'main.html', {})
+    return render(request, 'PAGE/dashboard.html', {})
