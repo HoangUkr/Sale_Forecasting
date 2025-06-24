@@ -200,7 +200,7 @@
 </div>
 <script>
     document.getElementById('upload-form').addEventListener('submit', function(e){
-        debugger;
+        // debugger;
         e.preventDefault();
         const formData = new FormData(this);
         fetch("{% url 'upload_csv' %}", {
@@ -212,7 +212,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            debugger;
+            // debugger;
             document.getElementById('total_order').innerText = data.total_order;
             document.getElementById('total_revenue').innerText = data.total_revenue;
             document.getElementById('most_sold').innerText = data.most_sold;
