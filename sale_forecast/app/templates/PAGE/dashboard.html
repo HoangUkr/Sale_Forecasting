@@ -195,6 +195,46 @@
         </div>
 
         <div class="row">
+            <div class="col-md-12">
+                <div class="card ">
+                    <div class="card-header ">
+                        <h5 class="card-title">Last prediction comparison</h5>
+                        <p class="card-category">Last prediction vs actual</p>
+                    </div>
+                    <div class="card-body ">
+                        <canvas id="predictionCompPlot" width="400" height="100"></canvas>
+                    </div>
+                    <!-- <div class="card-footer ">
+                        <hr>
+                        <div class="stats">
+                            <i class="fa fa-history"></i> Updated 3 minutes ago
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <!-- Prediction comparison -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card ">
+                    <div class="card-header ">
+                        <h5 class="card-title">Dish Distribution</h5>
+                        <p class="card-category">Dish distribution last 7 days</p>
+                    </div>
+                    <div class="card-body ">
+                        <canvas id="predictionCompPlot" width="400" height="100"></canvas>
+                    </div>
+                    <!-- <div class="card-footer ">
+                        <hr>
+                        <div class="stats">
+                            <i class="fa fa-history"></i> Updated 3 minutes ago
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="row">
             <div class="col-md-4">
                 <div class="card ">
                     <div class="card-header ">
@@ -238,17 +278,18 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div> -->
     </div>
+</div>
 </div>
 <script>
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
-        debugger;
-        demo.createHistogram();
-        demo.createPlotline();
-        demo.createDoughnutChart();
+        // debugger;
+        // demo.createHistogram();
+        // demo.createPlotline();
+        // demo.createDoughnutChart();
+        demo.createPlotlineComparison();
         document.getElementById('upload-form').addEventListener('submit', function (e) {
             // debugger;
             e.preventDefault();
@@ -262,12 +303,30 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    // debugger;
+                    debugger;
                     document.getElementById('total_order').innerText = data.total_order;
                     document.getElementById('total_revenue').innerText = data.total_revenue;
                     document.getElementById('most_sold').innerText = data.most_sold;
                     document.getElementById('least_sold').innerText = data.least_sold;
-                    demo
+
+                    const dailySale = data.daily_sale;
+                    const dailySaleLabels = Object.keys(dailySale),
+                        dailySaleData = Object.values(dailySale);
+                    debugger;
+                    const dishDistribution = data.dish_proportion;
+                    const sortedEntries = Object.entries(dishDistribution)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 10); // top 10
+
+                    const dishDistributionLabels = sortedEntries.map(entry => entry[0]);
+                    const dishDistributionData = sortedEntries.map(entry => entry[1]);
+
+                    // const dishDistributionLabels = Object.keys(dishDistribution),
+                    //     dishDistributionData = Object.values(dishDistribution);
+
+                    demo.createHistogram(dailySaleLabels, dailySaleData);
+                    demo.createPlotline(dailySaleLabels, dailySaleData);
+                    demo.createDoughnutChart(dishDistributionLabels, dishDistributionData);
                 })
                 .catch(error => console.log("Error: ", error));
         });
