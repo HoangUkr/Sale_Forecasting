@@ -9,7 +9,8 @@
                 <form method="post" enctype="multipart/form-data" id="upload-form" class="p-1 border rounded">
                     <div class="input-group no-border">
                         {% csrf_token %}
-                        <input type="file" name="file" id="uploadFile" accept=".csv" class="form-control" placeholder="Upload CSV file here..." >                        
+                        <input type="file" name="file" id="uploadFile" accept=".csv" class="form-control"
+                            placeholder="Upload CSV file here...">
                         <div class="update ml-auto mr-auto">
                             <button type="submit" class="btn btn-primary btn-round">
                                 Submit
@@ -131,25 +132,68 @@
                 </div>
             </div>
         </div>
+        <!-- Daily Sale -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card ">
                     <div class="card-header ">
-                        <h5 class="card-title">Users Behavior</h5>
-                        <p class="card-category">24 Hours performance</p>
+                        <h5 class="card-title">Weekday Sale</h5>
+                        <p class="card-category">Total orders each day</p>
                     </div>
                     <div class="card-body ">
-                        <canvas id=chartHours width="400" height="100"></canvas>
+                        <canvas id="histogramWeekday" width="400" height="100"></canvas>
                     </div>
-                    <div class="card-footer ">
+                    <!-- <div class="card-footer ">
                         <hr>
                         <div class="stats">
                             <i class="fa fa-history"></i> Updated 3 minutes ago
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
+
+        <!-- Sale Growth -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card ">
+                    <div class="card-header ">
+                        <h5 class="card-title">Sale Growth</h5>
+                        <p class="card-category">Sale of 7 last days + new update</p>
+                    </div>
+                    <div class="card-body ">
+                        <canvas id="saleGrowthLine" width="400" height="100"></canvas>
+                    </div>
+                    <!-- <div class="card-footer ">
+                        <hr>
+                        <div class="stats">
+                            <i class="fa fa-history"></i> Updated 3 minutes ago
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <!-- Dish Distribution -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card ">
+                    <div class="card-header ">
+                        <h5 class="card-title">Dish Distribution</h5>
+                        <p class="card-category">Dish distribution last 7 days</p>
+                    </div>
+                    <div class="card-body ">
+                        <canvas id="dishDistributionDoughnut" width="400" height="100"></canvas>
+                    </div>
+                    <!-- <div class="card-footer ">
+                        <hr>
+                        <div class="stats">
+                            <i class="fa fa-history"></i> Updated 3 minutes ago
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-4">
                 <div class="card ">
@@ -199,26 +243,34 @@
     </div>
 </div>
 <script>
-    document.getElementById('upload-form').addEventListener('submit', function(e){
-        // debugger;
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch("{% url 'upload_csv' %}", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
+        debugger;
+        demo.createHistogram();
+        demo.createPlotline();
+        demo.createDoughnutChart();
+        document.getElementById('upload-form').addEventListener('submit', function (e) {
             // debugger;
-            document.getElementById('total_order').innerText = data.total_order;
-            document.getElementById('total_revenue').innerText = data.total_revenue;
-            document.getElementById('most_sold').innerText = data.most_sold;
-            document.getElementById('least_sold').innerText = data.least_sold;
-        })
-        .catch(error => console.log("Error: ", error));
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch("{% url 'upload_csv' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // debugger;
+                    document.getElementById('total_order').innerText = data.total_order;
+                    document.getElementById('total_revenue').innerText = data.total_revenue;
+                    document.getElementById('most_sold').innerText = data.most_sold;
+                    document.getElementById('least_sold').innerText = data.least_sold;
+                    demo
+                })
+                .catch(error => console.log("Error: ", error));
+        });
     });
 </script>
 {% endblock %}
